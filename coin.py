@@ -1,6 +1,6 @@
 import pygame
 
-from init import WIDTH
+from init import WIDTH, OFFSET
 
 class Coin:
 
@@ -16,15 +16,11 @@ class Coin:
 
     def draw(self, screen):
         self.rectCenter = (self.x * WIDTH // 3 + WIDTH // 6, self.y)
-        pygame.draw.circle(screen, "yellow", self.rectCenter, 50)
+        pygame.draw.circle(screen, "yellow", self.rectCenter, WIDTH // 6 - OFFSET // 2)
 
     def fall(self, speed):
         self.y += speed
 
-    def addCoin(self, coins):
-        coins += 1
-
     def getRect(self):
-        print(pygame.Rect((self.rectCenter[0]-50, self.rectCenter[1]-50), 100, 100))
-        return pygame.Rect((self.rectCenter[0]-50, self.rectCenter[1]-50), 100, 100)
+        return pygame.Rect((self.rectCenter[0]- OFFSET // 2, self.rectCenter[1]- OFFSET // 2), (WIDTH // 3 - OFFSET, WIDTH // 3 - OFFSET))
 
