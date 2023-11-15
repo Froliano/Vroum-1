@@ -135,12 +135,12 @@ class Game:
         self.delay = (self.delay + self.speed) % 80
 
     def addObject(self):
-        if randint(1, 3) == 1 and time.time() > self.timer + self.cooldown:
+        if time.time() > self.timer + self.cooldown:
             self.timer = time.time()
             if randint(1, 5) == 1:
-                self.objects.append(Coin(randint(0, 2)))
+                self.objects.append(Coin(self.coinsImages, randint(1, 1)))
             else:
-                self.objects.append(Car(choice(self.carsImages), randint(0, 2)))
+                self.objects.append(Car(choice(self.carsImages), randint(0, 0)))
 
 
     def delObject(self):
@@ -168,8 +168,8 @@ class Game:
         return image
 
     def getCoinImage(self, x, y):
-        image = pygame.Surface((self.coinImages.get_rect()[2]//3-20, self.coinImages.get_rect()[3]//2-10))
-        image.blit(self.coinImages, (0, 0), (x+10, y+5, self.coinImages.get_rect()[2]//3-20, self.coinImages.get_rect()[3]//2-10))
+        image = pygame.Surface((self.coinImages.get_rect()[2]//13, self.coinImages.get_rect()[3]))
+        image.blit(self.coinImages, (0, 0), (x, y, self.coinImages.get_rect()[2]//13, self.coinImages.get_rect()[3]))
         image.set_colorkey([0, 0, 0])
         return image
 
