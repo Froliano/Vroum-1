@@ -5,13 +5,16 @@ from init import WIDTH, OFFSET
 
 class Bomb:
 
-    def __init__(self, x, y):
+    def __init__(self, x, y, image):
         self.x = x
         self.y = y
         self.speed = 10
         self.lunch = False
 
         self.rectCenter = (self.x * WIDTH // 3 + WIDTH // 6, self.y)
+
+        self.image = image
+        self.image = pygame.transform.scale(self.image, (WIDTH // 6 - OFFSET, WIDTH // 6 - OFFSET))
 
     def update(self, screen):
         if self.lunch:
@@ -20,7 +23,8 @@ class Bomb:
 
     def draw(self, screen):
         self.rectCenter = (self.x * WIDTH // 3 + WIDTH // 6, self.y)
-        pygame.draw.circle(screen, "black", self.rectCenter, WIDTH // 6 - OFFSET)
+        screen.blit(self.image, (self.rectCenter[0] - WIDTH // 12, self.rectCenter[1]))
+        #pygame.draw.circle(screen, "black", self.rectCenter, WIDTH // 6 - OFFSET)
 
     def activeLunch(self):
         self.lunch = True

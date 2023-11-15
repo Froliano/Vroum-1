@@ -23,6 +23,8 @@ class Game:
         self.coins = coins
         self.gameOverbool = False
 
+        self.bombImage = pygame.image.load("bomb.png")
+
         self.coinsImages = []
         self.coinImages = pygame.image.load("coin.png")
         for x in range(0, self.coinImages.get_rect()[2], self.coinImages.get_rect()[2] // 13):
@@ -54,7 +56,7 @@ class Game:
         self.space = True
 
         for i in range(self.numberBombs):
-            self.bombs.append(Bomb(self.player.x, self.player.y))
+            self.bombs.append(Bomb(self.player.x, self.player.y, self.bombImage))
 
     def update(self):
         self.input()
