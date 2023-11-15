@@ -11,6 +11,8 @@ class Bomb:
         self.speed = 10
         self.lunch = False
 
+        self.rectCenter = (self.x * WIDTH // 3 + WIDTH // 6, self.y)
+
     def update(self, screen):
         if self.lunch:
             self.draw(screen)
