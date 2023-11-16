@@ -36,5 +36,5 @@ class Player:
                 if type(object) is Coin:
                     return (1, object)
                 else:
-                    return (2, 0)
+                    return (2, object)
         return (0, 0)

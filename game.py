@@ -1,8 +1,8 @@
 import time
 
 import pygame
+import pygame_menu
 from random import randint, choice
-
 from car import Car
 from player import Player
 from coin import Coin
@@ -12,24 +12,31 @@ from init import WIDTH, HEIGHT
 
 class Game:
 
-    def __init__(self, screen, bestScore, coins):
+    def __init__(self, screen, bestScore, coins, bombs):
 
         self.screen = screen
         self.pressed = {}
         self.speed = 10
 
-        self.bestScore = bestScore
         self.score = 0
-        self.coins = coins
         self.gameOverbool = False
+        self.close = False
+        self.objects = []
+        self.bombs = []
+
+        self.bestScore = bestScore
+        self.coins = coins
+        self.numberBombs = bombs
+
+        self.boumImage = pygame.image.load("boum.png")
 
         self.bombImage = pygame.image.load("bomb.png")
+        self.bombImage = pygame.transform.scale(self.bombImage, (80, 80))
 
         self.coinsImages = []
         self.coinImages = pygame.image.load("coin.png")
         for x in range(0, self.coinImages.get_rect()[2], self.coinImages.get_rect()[2] // 13):
             self.coinsImages.append(self.getCoinImage(x, 0))
-
 
         self.carsImages = []
         self.carImages = pygame.image.load("cars.png")
@@ -37,20 +44,14 @@ class Game:
             for y in range(0, self.carImages.get_rect()[3]-1, self.carImages.get_rect()[3] // 2):
                 self.carsImages.append(self.getCarImage(x, y))
 
-                #print(y, self.images.get_rect()[3], self.images.get_rect()[3] // 2)
-
-
-
-        self.objects = []
-        self.player = Player(0, choice(self.carsImages))
-        self.numberBombs = 4
-        self.bombs = []
 
         self.font = pygame.font.Font("munro.ttf", 40)
 
-        self.delay = 0
+        self.delay = 1
         self.cooldown = 0.8
+        self.gameOverCooldown = 1.5
         self.timer = time.time()
+        self.player = Player(0, choice(self.carsImages))
         self.left = True
         self.right = True
         self.space = True
@@ -65,18 +66,6 @@ class Game:
         self.addObject()
         self.delObject()
 
-        collision = self.player.collide(self.objects)
-        if collision[0] == 1:
-            self.objects.remove(collision[1])
-            self.coins += 1
-        elif collision[0] == 2:
-            self.gameOver()
-        if len(self.bombs) > 0:
-            bombCollision = self.bombs[0].collide(self.objects)
-            if bombCollision[0] == 1:
-                self.objects.remove(bombCollision[1])
-                self.bombs.pop(0)
-
         if self.score >= (self.speed - 9) ** 2 * 1.5:
             self.speed += 1
 
@@ -88,6 +77,24 @@ class Game:
         for bomb in self.bombs:
             bomb.update(self.screen)
 
+        collision = self.player.collide(self.objects)
+        if collision[0] == 1:
+            self.objects.remove(collision[1])
+            self.coins += 1
+        elif collision[0] == 2:
+            if not self.gameOverbool:
+                self.gameOverTime = time.time()
+            self.carCollide = collision[1]
+            self.gameOver()
+        if len(self.bombs) > 0:
+            bombCollision = self.bombs[0].collide(self.objects)
+            if bombCollision[0] == 1:
+                self.objects.remove(bombCollision[1])
+                self.bombs.pop(0)
+
+        self.numberBombsText = self.font.render(f"{self.numberBombs}", True, "white")
+        self.screen.blit(self.bombImage, (10, 10))
+        self.screen.blit(self.numberBombsText, (self.bombImage.get_rect()[2] + 20, 30))
 
 
         self.scoreText = self.font.render(f"score : {self.score}", True, "white")
@@ -121,8 +128,9 @@ class Game:
                 self.right = True
 
             if self.pressed.get(pygame.K_SPACE):
-                if self.space and len(self.bombs) > 0:
+                if self.space and len(self.bombs) > 0 and not self.bombs[0].lunch:
                     self.bombs[0].activeLunch()
+                    self.numberBombs -= 1
                     self.space = False
             else:
                 self.space = True
@@ -160,8 +168,11 @@ class Game:
     def gameOver(self):
         self.gameOverbool = True
         self.speed = 0
+        self.boom()
         if self.score > self.bestScore:
             self.bestScore = self.score
+        if time.time() > self.gameOverTime + self.gameOverCooldown:
+            self.close = True
 
     def getCarImage(self, x, y):
         image = pygame.Surface((self.carImages.get_rect()[2]//3-20, self.carImages.get_rect()[3]//2-10))
@@ -175,3 +186,15 @@ class Game:
         image.set_colorkey([0, 0, 0])
         return image
 
+    def boom(self):
+        if self.player.y > self.carCollide.y:
+            y = self.player.y - self.boumImage.get_rect()[3] // 2
+        elif self.player.y < self.carCollide.y:
+            y = self.player.y + self.boumImage.get_rect()[3] // 2
+
+        self.screen.blit(self.boumImage, (self.player.x - self.boumImage.get_rect()[2] // 6, y))
+
+    def buyBomb(self):
+        if self.coins >= 3:
+            self.numberBombs += 1
+            self.coins -= 3

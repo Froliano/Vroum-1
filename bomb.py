@@ -14,7 +14,7 @@ class Bomb:
         self.rectCenter = (self.x * WIDTH // 3 + WIDTH // 6, self.y)
 
         self.image = image
-        self.image = pygame.transform.scale(self.image, (WIDTH // 6 - OFFSET, WIDTH // 6 - OFFSET))
+        self.image = pygame.transform.scale(self.image, (WIDTH // 6, WIDTH // 6))
 
     def update(self, screen):
         if self.lunch:
