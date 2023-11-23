@@ -14,7 +14,7 @@ class Game:
     def __init__(self, screen, bestScore, coins, bombs, pieceSound, bombSound, carCollideSound):
 
         # caracteristiques du jeu
-        self.screen = screenfdsqf
+        self.screen = screen
         self.pressed = {}
         self.speed = 9
 
