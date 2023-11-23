@@ -8,15 +8,15 @@ from coin import Coin
 from bomb import Bomb
 from init import WIDTH, HEIGHT
 
-
+    
 class Game:
 
     def __init__(self, screen, bestScore, coins, bombs, pieceSound, bombSound, carCollideSound):
 
         # caracteristiques du jeu
-        self.screen = screen
+        self.screen = screenfdsqf
         self.pressed = {}
-        self.speed = 10
+        self.speed = 9
 
         # initialisation des sons
         self.pieceSound = pieceSound
